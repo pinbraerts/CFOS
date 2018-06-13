@@ -16,14 +16,11 @@ LRESULT CALLBACK CFSystem::WndProc(
 	}
 
 	switch (message) {
-	case WM_SIZE:
-		sys->resize(LOWORD(lParam), HIWORD(lParam));
-		break;
 	case WM_DISPLAYCHANGE:
 		InvalidateRect(hWnd, nullptr, false);
 		break;
 	case WM_PAINT:
-		sys->ui->draw();
+		sys->ui.draw();
 		ValidateRect(hWnd, nullptr);
 		break;
 	case WM_DESTROY:
@@ -41,14 +38,19 @@ LRESULT CALLBACK CFSystem::WndProc(
 	return 0;
 }
 
-HRESULT CFSystem::createDeviceIndependentResources() {
+void CFSystem::createDeviceIndependentResources() {
 	HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &directFactory);
-	if (FAILED(hr)) return hr;
-	return CoCreateInstance(CLSID_WICImagingFactory,
+	CHECK;
+	hr = CoCreateInstance(CLSID_WICImagingFactory,
 		nullptr,
 		CLSCTX_INPROC_SERVER,
 		IID_PPV_ARGS(&imagingFactory)
 	);
+	CHECK;
+}
+
+void CFSystem::createWindow(bool nCmdShow) {
+	display.createWindow(*this, nCmdShow);
 }
 
 CFSystem::CFSystem(HINSTANCE hInst) : WNDCLASSEX{
@@ -64,30 +66,11 @@ CFSystem::CFSystem(HINSTANCE hInst) : WNDCLASSEX{
 	0,
 	WndClassName,
 	nullptr,
-} {
-	if (FAILED(createDeviceIndependentResources()))
-		throw std::runtime_error("Call to CreateDeviceIndependentResources failed!");
+}, ui(*this) {
+	createDeviceIndependentResources();
 
 	if (!RegisterClassEx(this))
 		throw std::runtime_error("Call to RegisterCLassEx failed!");
-}
-
-void CFSystem::createWindow(int nCmdShow) {
-	window = CreateWindow(
-		WndClassName,
-		WndTitle,
-		WS_POPUP,
-		500, 10,
-		450, 900,
-		nullptr,
-		nullptr,
-		hInstance,
-		this
-	);
-	if (window == nullptr)
-		throw std::runtime_error("Call to CreateWindow failed!");
-	ShowWindow(window, nCmdShow);
-	UpdateWindow(window);
 }
 
 int CFSystem::run() {
@@ -100,17 +83,12 @@ int CFSystem::run() {
 	return (int)msg.wParam;
 }
 
-void CFSystem::resize(UINT width, UINT height) {
-	if (renderTarget != nullptr)
-		((ID2D1HwndRenderTarget*)renderTarget)->Resize(D2D1::SizeU(width, height));
-}
-
 void CFSystem::mouseMove(UINT x, UINT y) {
 	mouseMoveEvent((float)x, (float)y);
 }
 
 CFSystem::~CFSystem() {
-	ui->unload();
+	ui.unload();
 	release(directFactory);
 	release(imagingFactory);
 }

@@ -70,6 +70,13 @@ public:
 		CHECK;
 		return bmp;
 	}
+	
+	ID2D1Bitmap* to(ID2D1RenderTarget& renderTarget) {
+		ID2D1Bitmap* bmp;
+		HRESULT hr = renderTarget.CreateBitmapFromWicBitmap(res, &bmp);
+		CHECK;
+		return bmp;
+	}
 
 	~ImageBuilder() {
 		release(decoder);

@@ -1,12 +1,12 @@
 #ifndef CFSYSTEM_H
 #define CFSYSTEM_H
 
-#include "CFContext.h"
+#include "CFDisplay.h"
 #include "CFWidget.h"
 #include "CFSysUI.h"
 
-class CFSystem : public WNDCLASSEX, public CFContext {
-private:
+class CFSystem : public WNDCLASSEX {
+public:
 	static constexpr TCHAR WndClassName[] = _T("CF");
 	static constexpr TCHAR WndTitle[] = _T("CF");
 
@@ -16,18 +16,19 @@ private:
 		WPARAM wParam,
 		LPARAM lParam);
 
-public:
-	HRESULT createDeviceIndependentResources();
+	void createDeviceIndependentResources();
+	void createWindow(bool nCmdShow);
 
 	CFSystem(HINSTANCE hInst);
 
-	void createWindow(int nCmdShow);
 	int run();
-	void resize(UINT width, UINT height);
 	void mouseMove(UINT x, UINT y);
 
 	ID2D1Factory* directFactory;
-	CFSysUI* ui;
+	IWICImagingFactory* imagingFactory;
+
+	CFSysUI ui;
+	CFDisplay display;
 
 	Event<float, float> mouseMoveEvent;
 

@@ -2,6 +2,7 @@
 #define CFWIDGET_H
 
 #include "includes.h"
+#define target (*(sys.display.renderTarget))
 
 struct CFWidget {
 	CFSystem& sys;

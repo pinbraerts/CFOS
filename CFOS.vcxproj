@@ -30,7 +30,7 @@
     <None Include="Example.cfast" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CFContext.h" />
+    <ClInclude Include="CFDisplay.h" />
     <ClInclude Include="CFWidget.h" />
     <ClInclude Include="CFOS.h" />
     <ClInclude Include="CFSystem.h" />
@@ -41,6 +41,7 @@
     <ClInclude Include="CFSysUI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CFDisplay.cpp" />
     <ClCompile Include="CFSystem.cpp" />
     <ClCompile Include="main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">true</ExcludedFromBuild>

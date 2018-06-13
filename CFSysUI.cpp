@@ -1,15 +1,17 @@
 #include "CFSysUI.h"
+#include "CFSystem.h"
 
 void CFSysUI::load() {
-	if (sys.renderTarget != nullptr)
+	if (sys.display.renderTarget != nullptr)
 		return;
 
-	RECT rc;
-	GetClientRect(sys.window, &rc);
 	HRESULT hr = sys.directFactory->CreateHwndRenderTarget(
 		D2D1::RenderTargetProperties(),
-		D2D1::HwndRenderTargetProperties(sys.window, D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top)),
-		(ID2D1HwndRenderTarget**)&sys.renderTarget
+		D2D1::HwndRenderTargetProperties(
+			sys.display.handle,
+			D2D1::SizeU((unsigned)sys.display.width, (unsigned)sys.display.height)
+		),
+		&sys.display.renderTarget
 	);
 	CHECK;
 
@@ -17,21 +19,21 @@ void CFSysUI::load() {
 }
 
 void CFSysUI::unload() {
-	release(sys.renderTarget);
+	release(sys.display.renderTarget);
 	CFWidgetHolder::unload();
 }
 
 void CFSysUI::draw() {
-	HRESULT hr;
 	load();
 
-	sys.renderTarget->BeginDraw();
-	sys.renderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
-	sys.renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+	target.BeginDraw();
+	target.SetTransform(D2D1::Matrix3x2F::Identity());
+	target.Clear(D2D1::ColorF(D2D1::ColorF::White));
 
 	CFWidgetHolder::draw();
 
-	hr = sys.renderTarget->EndDraw();
+	HRESULT hr;
+	hr = target.EndDraw();
 
 	if (hr == D2DERR_RECREATE_TARGET)
 		unload();

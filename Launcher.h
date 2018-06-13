@@ -11,25 +11,23 @@ private:
 
 public:
 	float page = 0;
-	float deltaPage = 10;
 
 	Launcher(CFSystem& s) : CFWidget(s) {
-		sys.mouseMoveEvent += [this](float x, float y) { onMouse(x, y); };
+		sys.mouseMoveEvent += [this](float x, float y) {
+			onMouse(x - sys.display.centerX(), y - sys.display.centerY());
+		};
 	}
 
 	void onMouse(float x, float y) {
-		RECT r;
-		GetClientRect(sys.window, &r);
-		x -= (r.left + r.right) / 2;
-		page = x / deltaPage;
+		page = x;
 	}
 
 	void load() override {
 		bmp = ImageBuilder(L"Background.jpg", sys.imagingFactory)
 			.convert()
-			.scale(0, 900, WICBitmapInterpolationModeHighQualityCubic)
-			.to(sys.renderTarget);
-		HRESULT hr = sys.renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::SeaGreen), &b);
+			.scale(0, sys.display.height, WICBitmapInterpolationModeHighQualityCubic)
+			.to(target);
+		HRESULT hr = target.CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::SeaGreen), &b);
 		CHECK;
 	}
 
@@ -39,17 +37,19 @@ public:
 	}
 
 	void draw() override {
-		RECT r;
-		GetClientRect(sys.window, &r);
-		float w = (float)(r.right - r.left), h = (float)(r.bottom - r.top);
 		auto s = bmp->GetSize();
-		sys.renderTarget->DrawBitmap(
+		auto rect = D2D1::RectF(
+			(s.width - sys.display.width) / 2 + page, 0,
+			(s.width + sys.display.width) / 2 + page, s.height
+		);
+		target.DrawBitmap(
 			bmp,
-			D2D1::RectF(r.left, r.top, r.right, r.bottom),
-			1,
+			sys.display.clientRect(),
+			1.0f,
 			D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			D2D1::RectF((s.width - w) / 2 + page * deltaPage, 0, (s.width + w) / 2 + page * deltaPage, s.height));
-		sys.renderTarget->DrawRectangle(D2D1::RectF(10, 10, 50, 50), b);
+			&rect
+		);
+		target.DrawRectangle(D2D1::RectF(10, 10, 50, 50), b);
 	}
 };
 

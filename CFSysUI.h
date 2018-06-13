@@ -1,9 +1,7 @@
 #ifndef CFSYSUI_H
 #define CFSYSUI_H
 
-#include "CFSystem.h"
 #include "CFWidget.h"
-#include "CFContext.h"
 
 class CFSysUI: public CFWidgetHolder {
 public:
