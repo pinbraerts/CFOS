@@ -4,13 +4,13 @@
 #include "CFSystem.h"
 #include "Image.h"
 
-class Launcher: public CFApplication {
+class Launcher: public CFWidget {
 private:
 	ID2D1SolidColorBrush* b = nullptr;
 	ID2D1Bitmap* bmp;
 
 public:
-	using CFApplication::CFApplication;
+	using CFWidget::CFWidget;
 
 	HRESULT createDeviceResources() override {
 		HRESULT hr;

@@ -1,7 +1,7 @@
 #ifndef CFOS_H
 #define CFOS_H
 
-#include "CFApplication.h"
+#include "CFWidget.h"
 #include "CFSystem.h"
 #include "Launcher.h"
 

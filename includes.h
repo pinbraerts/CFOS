@@ -22,6 +22,6 @@ void release(T*& i) {
 }
 
 class CFSystem;
-struct CFApplication;
+struct CFWidget;
 
 #endif // !INCLUDES_H

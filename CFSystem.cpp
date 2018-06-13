@@ -77,7 +77,7 @@ void CFSystem::discardDeviceResources() {
 		i.get().discardDeviceResources();
 }
 
-CFSystem::CFSystem(HINSTANCE hInst) : CFApplication(*this), WNDCLASSEX{
+CFSystem::CFSystem(HINSTANCE hInst) : CFWidget(*this), WNDCLASSEX{
 	sizeof(WNDCLASSEX),
 	CS_HREDRAW | CS_VREDRAW,
 	WndProc,

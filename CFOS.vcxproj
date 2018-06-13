@@ -30,7 +30,7 @@
     <None Include="Example.cfast" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CFApplication.h" />
+    <ClInclude Include="CFWidget.h" />
     <ClInclude Include="CFOS.h" />
     <ClInclude Include="CFSystem.h" />
     <ClInclude Include="Event.h" />

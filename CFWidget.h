@@ -3,10 +3,10 @@
 
 #include "includes.h"
 
-struct CFApplication {
+struct CFWidget {
 	CFSystem& sys;
 
-	CFApplication(CFSystem& s) : sys(s) { }
+	CFWidget(CFSystem& s) : sys(s) { }
 
 	virtual HRESULT createDeviceResources() = 0;
 	virtual void discardDeviceResources() = 0;

@@ -35,10 +35,10 @@
     <ClInclude Include="includes.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="CFApplication.h">
+    <ClInclude Include="Image.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Image.h">
+    <ClInclude Include="CFWidget.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

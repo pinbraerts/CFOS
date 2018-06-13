@@ -1,9 +1,9 @@
 #ifndef CFSYSTEM_H
 #define CFSYSTEM_H
 
-#include "CFApplication.h"
+#include "CFWidget.h"
 
-class CFSystem : public CFApplication, public WNDCLASSEX {
+class CFSystem : public CFWidget, public WNDCLASSEX {
 private:
 	static constexpr TCHAR WndClassName[] = _T("CF");
 	static constexpr TCHAR WndTitle[] = _T("CF");
@@ -32,7 +32,7 @@ public:
 	void resize(UINT width, UINT height);
 	void draw() override;
 
-	std::vector<std::reference_wrapper<CFApplication>> applications;
+	std::vector<std::reference_wrapper<CFWidget>> applications;
 
 	~CFSystem();
 };
