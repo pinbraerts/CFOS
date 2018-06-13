@@ -30,7 +30,8 @@ LRESULT CALLBACK CFSystem::WndProc(
 		PostQuitMessage(0);
 		break;
 	case WM_MOUSEMOVE:
-		// sys->mouseMove();
+		sys->mouseMove(LOWORD(lParam), HIWORD(lParam));
+		InvalidateRect(hWnd, nullptr, false);
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -102,6 +103,10 @@ int CFSystem::run() {
 void CFSystem::resize(UINT width, UINT height) {
 	if (renderTarget != nullptr)
 		((ID2D1HwndRenderTarget*)renderTarget)->Resize(D2D1::SizeU(width, height));
+}
+
+void CFSystem::mouseMove(UINT x, UINT y) {
+	mouseMoveEvent((float)x, (float)y);
 }
 
 CFSystem::~CFSystem() {

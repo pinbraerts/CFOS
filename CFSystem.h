@@ -24,9 +24,12 @@ public:
 	void createWindow(int nCmdShow);
 	int run();
 	void resize(UINT width, UINT height);
+	void mouseMove(UINT x, UINT y);
 
 	ID2D1Factory* directFactory;
 	CFSysUI* ui;
+
+	Event<float, float> mouseMoveEvent;
 
 	~CFSystem();
 };

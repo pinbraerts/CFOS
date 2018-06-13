@@ -19,18 +19,18 @@ public:
 
 	template<class T>
 	Event& operator+=(T& f) {
-		listeners.push_front(f);
+		listeners.push_back(f);
 		return *this;
 	}
 	
 	template<class T>
 	Event& operator+=(T&& f) {
-		listeners.emplace_front(std::move(f));
+		listeners.emplace_back(std::move(f));
 		return *this;
 	}
 
 	Event& operator+=(Event& f) {
-		listeners.push_front(std::ref(f));
+		listeners.push_back(std::ref(f));
 		return *this;
 	}
 };
