@@ -2,6 +2,7 @@
 #define LAUNCHER_H
 
 #include "CFSystem.h"
+#include "Image.h"
 
 class Launcher: public CFApplication {
 private:
@@ -13,7 +14,7 @@ public:
 
 	HRESULT createDeviceResources() override {
 		HRESULT hr;
-		hr = sys.loadBitmap(L"Background.jpg", bmp);
+		hr = ImageBuilder(L"Background.jpg", sys.imagingFactory).convert().to(sys.renderTarget, bmp);
 		if (FAILED(hr)) return hr;
 		hr = sys.renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::SeaGreen), &b);
 		return hr;

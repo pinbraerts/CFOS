@@ -149,65 +149,6 @@ void CFSystem::draw() {
 		throw std::runtime_error("Failed render!");
 }
 
-HRESULT CFSystem::loadBitmap(LPCWSTR uri, ID2D1Bitmap *& bmp, UINT dWidth, UINT dHeight) {
-	IWICBitmapDecoder* decoder = nullptr;
-	IWICBitmapFrameDecode* src = nullptr;
-	IWICFormatConverter* converter = nullptr;
-	IWICBitmapScaler* scaler = nullptr;
-	IWICBitmapSource* res = nullptr;
-
-	HRESULT hr = imagingFactory->CreateDecoderFromFilename(
-		uri, nullptr, GENERIC_READ,
-		WICDecodeMetadataCacheOnLoad, &decoder
-	);
-	if (FAILED(hr)) goto cleanup;
-
-	hr = decoder->GetFrame(0, &src);
-	if (FAILED(hr)) goto cleanup;
-	res = src;
-
-	WICPixelFormatGUID pf;
-	res->GetPixelFormat(&pf);
-	if (pf != GUID_WICPixelFormat32bppPBGRA) {
-		hr = imagingFactory->CreateFormatConverter(&converter);
-		if (FAILED(hr)) goto cleanup;
-		hr = converter->Initialize(
-			res,
-			GUID_WICPixelFormat32bppPBGRA,
-			WICBitmapDitherTypeNone,
-			nullptr,
-			0.f,
-			WICBitmapPaletteTypeMedianCut
-		);
-		if (FAILED(hr)) goto cleanup;
-		res = converter;
-	}
-
-	UINT w, h;
-	res->GetSize(&w, &h);
-	if ((dWidth != w || dHeight != h) && (dWidth != 0 && dHeight != 0)) {
-		if (dWidth == 0)
-			dWidth = w * dHeight / h;
-		else if (dHeight == 0)
-			dHeight = h * dWidth / w;
-		hr = imagingFactory->CreateBitmapScaler(&scaler);
-		if (FAILED(hr)) goto cleanup;
-		hr = scaler->Initialize(res, dWidth, dHeight, WICBitmapInterpolationModeLinear);
-		if (FAILED(hr)) return hr;
-		res = scaler;
-	}
-
-	renderTarget->CreateBitmapFromWicBitmap(res, &bmp);
-
-cleanup:
-	release(decoder);
-	release(src);
-	release(converter);
-	release(scaler);
-
-	return hr;
-}
-
 CFSystem::~CFSystem() {
 	discardDeviceResources();
 	release(directFactory);

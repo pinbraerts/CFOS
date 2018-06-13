@@ -32,11 +32,6 @@ public:
 	void resize(UINT width, UINT height);
 	void draw() override;
 
-	HRESULT loadBitmap(LPCWSTR uri, ID2D1Bitmap*& bmp, UINT dWidth = 0, UINT dHeight = 0);
-	inline HRESULT loadBitmap(std::wstring uri, ID2D1Bitmap*& bmp, UINT dWidth = 0, UINT dHeight = 0) {
-		return loadBitmap(uri.c_str(), bmp, dWidth = 0, dHeight = 0);
-	}
-
 	std::vector<std::reference_wrapper<CFApplication>> applications;
 
 	~CFSystem();
