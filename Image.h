@@ -2,7 +2,6 @@
 #define IMAGE_H
 
 #include "includes.h"
-#define CHECK if (FAILED(hr)) throw std::runtime_error("HR Error")
 
 class ImageBuilder {
 private:
@@ -49,7 +48,7 @@ public:
 		WICBitmapInterpolationMode iMode = WICBitmapInterpolationModeLinear) {
 		UINT w, h;
 		res->GetSize(&w, &h);
-		if ((dWidth != w || dHeight != h) && (dWidth != 0 && dHeight != 0)) {
+		if ((dWidth != w || dHeight != h) && (dWidth != 0 || dHeight != 0)) {
 			if (dWidth == 0)
 				dWidth = w * dHeight / h;
 			else if (dHeight == 0)
@@ -65,8 +64,11 @@ public:
 		return *this;
 	}
 
-	HRESULT to(ID2D1RenderTarget* renderTarget, ID2D1Bitmap*& bmp) {
-		return renderTarget->CreateBitmapFromWicBitmap(res, &bmp);
+	ID2D1Bitmap* to(ID2D1RenderTarget* renderTarget) {
+		ID2D1Bitmap* bmp;
+		HRESULT hr = renderTarget->CreateBitmapFromWicBitmap(res, &bmp);
+		CHECK;
+		return bmp;
 	}
 
 	~ImageBuilder() {

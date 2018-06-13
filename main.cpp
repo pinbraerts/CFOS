@@ -10,9 +10,11 @@ int CALLBACK _tWinMain(
 	CoInitialize(nullptr);
 	try {
 		CFSystem sys(hInst);
+		CFSysUI ui(sys);
+		sys.ui = &ui;
 
 		Launcher l{ sys };
-		sys.applications.emplace_back(l);
+		sys.ui->children.emplace_back(l);
 
 		sys.createWindow(nCmdShow);
 		res = sys.run();

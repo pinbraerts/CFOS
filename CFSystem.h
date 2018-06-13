@@ -1,9 +1,11 @@
 #ifndef CFSYSTEM_H
 #define CFSYSTEM_H
 
+#include "CFContext.h"
 #include "CFWidget.h"
+#include "CFSysUI.h"
 
-class CFSystem : public CFWidget, public WNDCLASSEX {
+class CFSystem : public WNDCLASSEX, public CFContext {
 private:
 	static constexpr TCHAR WndClassName[] = _T("CF");
 	static constexpr TCHAR WndTitle[] = _T("CF");
@@ -14,25 +16,17 @@ private:
 		WPARAM wParam,
 		LPARAM lParam);
 
-	ID2D1Factory* directFactory;
-
 public:
-	HWND window;
-	ID2D1HwndRenderTarget* renderTarget;
-	IWICImagingFactory* imagingFactory;
-
 	HRESULT createDeviceIndependentResources();
-	HRESULT createDeviceResources() override;
-	void discardDeviceResources() override;
 
 	CFSystem(HINSTANCE hInst);
 
 	void createWindow(int nCmdShow);
 	int run();
 	void resize(UINT width, UINT height);
-	void draw() override;
 
-	std::vector<std::reference_wrapper<CFWidget>> applications;
+	ID2D1Factory* directFactory;
+	CFSysUI* ui;
 
 	~CFSystem();
 };

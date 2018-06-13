@@ -23,7 +23,7 @@ LRESULT CALLBACK CFSystem::WndProc(
 		InvalidateRect(hWnd, nullptr, false);
 		break;
 	case WM_PAINT:
-		sys->draw();
+		sys->ui->draw();
 		ValidateRect(hWnd, nullptr);
 		break;
 	case WM_DESTROY:
@@ -50,34 +50,7 @@ HRESULT CFSystem::createDeviceIndependentResources() {
 	);
 }
 
-HRESULT CFSystem::createDeviceResources() {
-	if (renderTarget != nullptr)
-		return S_OK;
-
-	RECT rc;
-	GetClientRect(window, &rc);
-	HRESULT hr = directFactory->CreateHwndRenderTarget(
-		D2D1::RenderTargetProperties(),
-		D2D1::HwndRenderTargetProperties(window, D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top)),
-		&renderTarget
-	);
-	if (FAILED(hr)) return hr;
-
-	for (auto i : applications) {
-		hr = i.get().createDeviceResources();
-		if (FAILED(hr)) return hr;
-	}
-
-	return hr;
-}
-
-void CFSystem::discardDeviceResources() {
-	release(renderTarget);
-	for (auto i : applications)
-		i.get().discardDeviceResources();
-}
-
-CFSystem::CFSystem(HINSTANCE hInst) : CFWidget(*this), WNDCLASSEX{
+CFSystem::CFSystem(HINSTANCE hInst) : WNDCLASSEX{
 	sizeof(WNDCLASSEX),
 	CS_HREDRAW | CS_VREDRAW,
 	WndProc,
@@ -128,29 +101,11 @@ int CFSystem::run() {
 
 void CFSystem::resize(UINT width, UINT height) {
 	if (renderTarget != nullptr)
-		renderTarget->Resize(D2D1::SizeU(width, height));
-}
-
-void CFSystem::draw() {
-	HRESULT hr = createDeviceResources();
-
-	renderTarget->BeginDraw();
-	renderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
-	renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
-
-	for (auto i : applications)
-		i.get().draw();
-
-	hr = renderTarget->EndDraw();
-
-	if (hr == D2DERR_RECREATE_TARGET)
-		discardDeviceResources();
-	else if (FAILED(hr))
-		throw std::runtime_error("Failed render!");
+		((ID2D1HwndRenderTarget*)renderTarget)->Resize(D2D1::SizeU(width, height));
 }
 
 CFSystem::~CFSystem() {
-	discardDeviceResources();
+	ui->unload();
 	release(directFactory);
 	release(imagingFactory);
 }
