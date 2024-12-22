@@ -16,6 +16,8 @@
 
 #define CHECK if(FAILED(hr)) throw std::runtime_error(_com_error(hr).ErrorMessage())
 
+constexpr auto GWL_USERDATA = -21;
+
 template<class T>
 void release(T*& i) {
 	if (i != nullptr) {
